@@ -6,12 +6,7 @@ import minitorch
 from .strategies import med_ints, small_floats
 import pytest
 
-# Define custom marks
-pytest.mark.task0_1 = pytest.mark.task0_1
-pytest.mark.task0_2 = pytest.mark.task0_2
-# Define other custom marks if needed
-
-# Now you can use these custom marks in your tests without triggering unknown mark warnings
+# ## Task 0.4: Modules
 
 # # Tests for module.py
 
