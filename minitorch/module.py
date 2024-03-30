@@ -39,7 +39,6 @@ class Module:
         for module in self.modules.values():
             module.eval()
 
-
     def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
         params = []
         for name, param in self._parameters.items():
@@ -55,18 +54,7 @@ class Module:
             params.extend(module.parameters())
         return params
 
-
     def add_parameter(self, k: str, v: Any) -> Parameter:
-        """
-        Manually add a parameter. Useful helper for scalar parameters.
-
-        Args:
-            k: Local name of the parameter.
-            v: Value for the parameter.
-
-        Returns:
-            Newly created parameter.
-        """
         val = Parameter(v, k)
         self.__dict__["_parameters"][k] = val
         return val

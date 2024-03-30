@@ -1,13 +1,8 @@
 """
 Collection of the core mathematical operators used throughout the code base.
 """
-import functools
 import math
 from typing import Callable, Iterable
-
-# ## Task 0.1
-#
-# Implementation of a prelude of elementary functions.
 
 
 def mul(x: float, y: float) -> float:
@@ -23,7 +18,7 @@ def add(x: float, y: float) -> float:
 
 
 def neg(x: float) -> float:
-    return
+    return -x  # Corrected to return negative of x
 
 
 def lt(x: float, y: float) -> float:
@@ -43,34 +38,31 @@ def is_close(x: float, y: float) -> float:
 
 
 def sigmoid(x: float) -> float:
-    if x > 0:
-        return 1.0 / (1.0 + math.exp(-x))
+    if x >= 0:
+        z = math.exp(-x)
+        return 1.0 / (1.0 + z)
     else:
-        exp_x = math.exp(x)
-        return exp_x / (1.0 + exp_x)
-    
+        z = math.exp(x)
+        return z / (1.0 + z)
 
 
 def relu(x: float) -> float:
-    return x if x>0 else 0.0
+    return x if x > 0 else 0.0
 
 
 EPS = 1e-6
 
 
 def log(x: float) -> float:
-    "$f(x) = log(x)$"
     return math.log(x + EPS)
 
 
 def exp(x: float) -> float:
-    "$f(x) = e^{x}$"
     return math.exp(x)
 
 
 def log_back(x: float, d: float) -> float:
-    return d / (x+EPS)
-
+    return d / (x + EPS)
 
 
 def inv(x: float) -> float:
@@ -78,20 +70,15 @@ def inv(x: float) -> float:
 
 
 def inv_back(x: float, d: float) -> float:
-    return -d / (x * x) 
+    return -d / (x ** 2)
 
 
 def relu_back(x: float, d: float) -> float:
-    return d if x>0 else 0.0
-
-
-# ## Task 0.3
-
-# Small practice library of elementary higher-order functions.
+    return d if x > 0 else 0.0
 
 
 def map(fn: Callable[[float], float]) -> Callable[[Iterable[float]], Iterable[float]]:
-    def apply_map(ls:Iterable[float]) -> Iterable[float]:
+    def apply_map(ls: Iterable[float]) -> Iterable[float]:
         return [fn(item) for item in ls]
     return apply_map
 
@@ -120,10 +107,8 @@ def reduce(fn: Callable[[float, float], float], start: float) -> Callable[[Itera
 
 
 def sum(ls: Iterable[float]) -> float:
-    "Sum of a list using reduce and add"
     return reduce(add, 0.0)(ls)
 
 
 def prod(ls: Iterable[float]) -> float:
-    "Product of a list using reduce and mul"
     return reduce(mul, 1.0)(ls)

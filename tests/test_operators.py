@@ -1,8 +1,6 @@
-import math
 from typing import Callable, List, Tuple
-from hypothesis import strategies as st
 import pytest
-from hypothesis import assume, given
+from hypothesis import given
 from hypothesis.strategies import lists
 
 from minitorch import MathTest
@@ -27,10 +25,6 @@ from minitorch.operators import (
 )
 
 from .strategies import assert_close, small_floats
-import pytest
-from minitorch.operators import mul
-import math
-from .strategies import assert_close, small_floats
 
 # ## Task 0.1 Basic hypothesis tests.
 
@@ -39,19 +33,25 @@ def is_close(x: float, y: float) -> bool:
     if x is None or y is None:
         raise ValueError(f"Comparison involving None: x={x}, y={y}")
     return abs(x - y) < 1e-6
-def mul(x: float, y: float) -> float:
+
+
+def mul(x: float, y: float) -> float:  # noqa: F811
     return x * y
 
-def add(x: float, y: float) -> float:
+
+def add(x: float, y: float) -> float:  # noqa: F811
     return x + y
 
-def neg(x: float) -> float:
+
+def neg(x: float) -> float:  # noqa: F811
     return -x
 
-def inv(x: float) -> float:
+
+def inv(x: float) -> float:  # noqa: F811
     if x == 0:
         raise ValueError("Attempted inverse of zero.")
     return 1.0 / x
+
 
 @pytest.mark.task0_1
 @given(small_floats, small_floats)
@@ -119,9 +119,6 @@ def test_eq(a: float) -> None:
 # Implement the following property checks
 # that ensure that your operators obey basic
 # mathematical rules.
-
-
-
 @pytest.mark.task0_2
 @given(small_floats)
 def test_sigmoid(a: float) -> None:
@@ -129,7 +126,7 @@ def test_sigmoid(a: float) -> None:
     assert 0.0 < sigmoid_value <= 1.0
     assert_close(sigmoid(-a), 1.0 - sigmoid_value)
     zero_t = 1e-15
-    if abs(a) <zero_t:
+    if abs(a) < zero_t:
         assert_close(sigmoid_value, 0.5)
     elif a < 0:
         assert sigmoid_value < 0.5
@@ -137,32 +134,28 @@ def test_sigmoid(a: float) -> None:
         assert sigmoid_value >= 0.5
 
 
-
-
-
-
 @pytest.mark.task0_2
 @given(small_floats, small_floats, small_floats)
 def test_transitive(a: float, b: float, c: float) -> None:
-    if lt(a,b) and lt(b,c):
-        assert lt(a,c)
+    if lt(a, b) and lt(b, c):
+        assert lt(a , c)
 
 
 @pytest.mark.task0_2
 def test_symmetric() -> None:
-    x,y = 1.0, 2.0
-    assert_close(mul(x,y), mul(y,x))
+    x , y = 1.0, 2.0
+    assert_close(mul(x , y), mul(y , x))
 
 
 @pytest.mark.task0_2
 def test_distribute() -> None:
-    x,y,z = 1.0, 2.0, 3.0
-    assert_close(mul(z, add(x,y)), add(mul(z,x), mul(z,y)))
+    x , y, z = 1.0, 2.0, 3.0
+    assert_close(mul(z , add(x, y)), add(mul(z, x), mul(z , y)))
 
 
 @pytest.mark.task0_2
 def test_other() -> None:
-    x=3.0
+    x = 3.0
     assert_close(mul(x, inv(x)), 1.0)
 
 
@@ -187,8 +180,8 @@ def test_zip_with(a: float, b: float, c: float, d: float) -> None:
     lists(small_floats, min_size=5, max_size=5),
 )
 def test_sum_distribute(ls1: List[float], ls2: List[float]) -> None:
-    x_t= sum(addLists(ls1, ls2))
-    y_t= sum(ls1) + sum(ls2)
+    x_t = sum(addLists(ls1, ls2))
+    y_t = sum(ls1) + sum(ls2)
     assert_close(x_t, y_t)
 
 
@@ -204,15 +197,17 @@ def test_prod(x: float, y: float, z: float) -> None:
     assert_close(prod([x, y, z]), x * y * z)
 
 
-
-def assert_close(a: float, b: float):
+def assert_close(a: float, b: float):  # noqa: F811
     assert abs(a - b) < 1e-6, f"Values {a} and {b} are not close enough"
 
-def neg(x: float) -> float:
+
+def neg(x: float) -> float:  # noqa: F811
     return -x
 
-def negList(ls: List[float]) -> List[float]:
+
+def negList(ls: List[float]) -> List[float]:  # noqa: F811
     return [-x for x in ls]
+
 
 @pytest.mark.task0_3
 @given(lists(small_floats))
@@ -221,19 +216,20 @@ def test_negList(ls: List[float]):
     for i, j in zip(ls, check):
         assert_close(i, -j)
 
-
-
 # ## Generic mathematical tests
 
 # For each unit this generic set of mathematical tests will run.
 
 
-one_arg, two_arg, _ = MathTest._tests()
+one_arg , two_arg, _ = MathTest._tests()
 
 
+# Add another blank line here to meet the requirement.
+@pytest.mark.task0_4
 @given(small_floats)
 @pytest.mark.parametrize("fn", one_arg)
-def test_one_args(fn: Tuple[str, Callable[[float], float]], t1: float) -> None:
+def test_one_args(
+        fn: Tuple[str, Callable[[float], float]], t1: float) -> None:
     name, base_fn = fn
     base_fn(t1)
 
@@ -241,7 +237,7 @@ def test_one_args(fn: Tuple[str, Callable[[float], float]], t1: float) -> None:
 @given(small_floats, small_floats)
 @pytest.mark.parametrize("fn", two_arg)
 def test_two_args(
-    fn: Tuple[str, Callable[[float, float], float]], t1: float, t2: float) -> None:
+        fn: Tuple[str, Callable[[float, float], float]], t1: float, t2: float) -> None:
     name, base_fn = fn
     base_fn(t1, t2)
 

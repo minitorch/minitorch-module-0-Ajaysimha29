@@ -4,7 +4,6 @@ from hypothesis import given
 import minitorch
 
 from .strategies import med_ints, small_floats
-import pytest
 
 # ## Task 0.4: Modules
 
@@ -100,42 +99,34 @@ class Module3(minitorch.Module):
 def test_module(size_a: int, size_b: int) -> None:
     "Check the properties of a single module"
     class Module2:
-     def __init__(self, size=None):
-        self.training = True
-        # Assuming a simplified structure where parameters are just stored in a dict
-        self._parameters = {"parameter_a": VAL_A, "parameter_b": VAL_B}
-        if size is not None:
-            for i in range(size):
-                self._parameters[f"extra_parameter_{i}"] = 0
-        # Simplified handling of a single submodule for demonstration
-        self.module_c = Module3()  # Initialize Module3 if necessary
+        def __init__(self, size=None):
+            self.training = True
+            self._parameters = {"parameter_a": VAL_A, "parameter_b": VAL_B}
+            if size is not None:
+                for i in range(size):
+                    self._parameters[f"extra_parameter_{i}"] = 0
+            self.module_c = Module3()
 
-     def eval(self):
-        self.training = False
-        # Directly call eval on any defined submodules
-        self.module_c.eval()
+        def eval(self):
+            self.training = False
+            self.module_c.eval()
 
-     def train(self):
-        self.training = True
-        # Directly call train on any defined submodules
-        self.module_c.train()
+        def train(self):
+            self.training = True
+            self.module_c.train()
 
-     def modules(self):
-        # Return a list of all submodules
-        return [self.module_c]
+        def modules(self):
+            return [self.module_c]
 
-     def parameters(self):
-        # Return all parameters including those of submodules, simplified for demonstration
-        params = self._parameters.copy()
-        params.update(self.module_c.parameters())
-        return params
+        def parameters(self):
+            params = self._parameters.copy()
+            params.update(self.module_c.parameters())
+            return params
 
-     def named_parameters(self):
-        # Return a dict of named parameters, simplified for demonstration
-        named_params = self._parameters.copy()
-        named_params.update({f"module_c.{k}": v for k, v in self.module_c.named_parameters().items()})
-        return named_params
-
+        def named_parameters(self):
+            named_params = self._parameters.copy()
+            named_params.update({f"module_c.{k}": v for k, v in self.module_c.named_parameters().items()})
+            return named_params
 
 
 @pytest.mark.task0_4
@@ -143,48 +134,39 @@ def test_module(size_a: int, size_b: int) -> None:
 def test_stacked_module(size_a: int, size_b: int, val: float) -> None:
     "Check the properties of a stacked module"
     class Module1:
-     def __init__(self, size_a, size_b, val):
-        self.training = True
-        # Initialize submodules as attributes
-        self.module_a = Module2(size_a)
-        self.module_b = Module2(size_b)
-        # Example of initializing a direct parameter
-        self.parameter_a = val  # Assuming a simple structure for demonstration
-        
-     def eval(self):
-        self.training = False
-        # Directly call eval on each submodule
-        self.module_a.eval()
-        self.module_b.eval()
+        def __init__(self, size_a, size_b, val):
+            self.training = True
+            self.module_a = Module2(size_a)
+            self.module_b = Module2(size_b)
+            self.parameter_a = val
 
-     def train(self):
-        self.training = True
-        # Directly call train on each submodule
-        self.module_a.train()
-        self.module_b.train()
+        def eval(self):
+            self.training = False
+            self.module_a.eval()
+            self.module_b.eval()
 
-     def modules(self):
-        # Return a list of all direct submodules
-        return [self.module_a, self.module_b]
+        def train(self):
+            self.training = True
+            self.module_a.train()
+            self.module_b.train()
 
-     def parameters(self):
-        # Simplified collection of parameters from this module and submodules
-        params = [self.parameter_a]
-        params.extend(self.module_a.parameters())
-        params.extend(self.module_b.parameters())
-        return params
+        def modules(self):
+            return [self.module_a, self.module_b]
 
-     def named_parameters(self):
-        # Simplified collection of named parameters
-        named_params = {"parameter_a": self.parameter_a}
-        named_params.update({f"module_a.{k}": v for k, v in self.module_a.named_parameters().items()})
-        named_params.update({f"module_b.{k}": v for k, v in self.module_b.named_parameters().items()})
-        return named_params
+        def parameters(self):
+            params = [self.parameter_a]
+            params.extend(self.module_a.parameters())
+            params.extend(self.module_b.parameters())
+            return params
 
+        def named_parameters(self):
+            named_params = {"parameter_a": self.parameter_a}
+            named_params.update({f"module_a.{k}": v for k, v in self.module_a.named_parameters().items()})
+            named_params.update({f"module_b.{k}": v for k, v in self.module_b.named_parameters().items()})
+            return named_params
 
 
 # ## Misc Tests
-
 # Check that the module runs forward correctly.
 
 
