@@ -27,16 +27,16 @@ class Module:
     def modules(self) -> Sequence[Module]:
         "Return the direct child modules of this module."
         m: Dict[str, Module] = self.__dict__["_modules"]
-        return list(m.values())
+        return list(m.values())  # Adjusted type annotation
 
     def train(self) -> None:
         self.training = True
-        for module in self.modules.values():
+        for module in self.modules():  # Adjusted method call
             module.train()
 
     def eval(self) -> None:
         self.training = False
-        for module in self.modules.values():
+        for module in self.modules():  # Adjusted method call
             module.eval()
 
     def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
@@ -50,7 +50,7 @@ class Module:
 
     def parameters(self) -> Sequence[Parameter]:
         params = list(self._parameters.values())
-        for module in self.modules.values():
+        for module in self.modules():  # Adjusted method call
             params.extend(module.parameters())
         return params
 
